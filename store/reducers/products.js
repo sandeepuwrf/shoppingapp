@@ -1,4 +1,4 @@
-import PRODUCT  from '../../data/dummy-data'
+import PRODUCT from '../../data/dummy-data'
 
 const intialState = {
     availableProducts: PRODUCT,
