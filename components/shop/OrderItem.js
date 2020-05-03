@@ -1,4 +1,4 @@
-import { React , useState} from 'react';
+import React from 'react';
 import {View,Text,Button,StyleSheet} from 'react-native';
 import CartItem from './CartItem';
 import Colors from '../../constants/Colors';
