@@ -6,6 +6,7 @@
  };
 
  export default (state = initialState, action) => {
+     console.log("Java Date" , + new Date())
      switch (action.type) {
          case ADD_ORDER:
              const newOrder = new Order(

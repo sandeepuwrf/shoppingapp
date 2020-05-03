@@ -104,7 +104,8 @@ const styles = StyleSheet.create({
     },
     itemData: {
         flexDirection: 'row',
-        alignItems: 'center'
+        justifyContent: 'space-between',
+        alignItems:'center'
     },
     quantity: {
         //fontFamily: 'open-sans',
