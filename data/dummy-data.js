@@ -20,11 +20,20 @@ const PRODUCT = [
     new Product(
         'p3',
         'u1',
-        'Mens Nike Sportswear - Yello Shirt',
+        'Mens Nike - Yello',
         'https://media.kohlsimg.com/is/image/kohls/3583992_Dark_Sulfer_White?wid=500&hei=500&op_sharpen=1',
         "Men's Nike Sportswear Club Fleece Pullover Hoodie",
         5.49
     ),
+    new Product(
+        'p4',
+        'u1',
+        'Womens LC',
+        'https://media.kohlsimg.com/is/image/kohls/3633345_ALT4?wid=500&hei=500&op_sharpen=1',
+        "Women's LC Lauren Conrad Pleat Neck Top",
+        26.99
+    ),
+
 
 ];
 export default PRODUCT;

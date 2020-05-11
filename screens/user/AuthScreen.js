@@ -1,9 +1,11 @@
-import React, { useReducer, useCallback } from 'react';
+import React, { useState, useEffect, useReducer, useCallback } from 'react';
 import {
     View,
     ScrollView,
     KeyboardAvoidingView,
     Button,
+    ActivityIndicator,
+    Alert,
     StyleSheet,
     ImageBackground
 } from 'react-native';
@@ -40,6 +42,9 @@ const formReducer = (state, action) => {
 };
 
 const AuthScreen = props => {
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState();
+    const [isSignup, setIsSignup] = useState(false);
     const dispatch = useDispatch();
     const [formState, dispatchFormState] = useReducer(formReducer, {
         inputValues: {
@@ -53,6 +58,39 @@ const AuthScreen = props => {
         formIsValid: false
     });
 
+    useEffect(() => {
+        if (error) {
+            Alert.alert('An error occurred!', error, [{ text: 'Ok' }]);
+        }
+    }, [error]);
+
+    const authHandler = async () => {
+        let action;
+        console.log('isSignup: ' + isSignup)
+        if (isSignup) {
+            console.log('email: ' + formState.inputValues.email)
+            console.log('password: ' + formState.inputValues.password)
+            action = authActions.signup(
+                formState.inputValues.email,
+                formState.inputValues.password
+            );
+        } else {
+            action = authActions.login(
+                formState.inputValues.email,
+                formState.inputValues.password
+            );
+        }
+        setError(null);
+        setIsLoading(true);
+        try {
+            await dispatch(action);
+            props.navigation.navigate('Shop');
+        } catch (err) {
+            setError(err.message);
+            setIsLoading(false);
+        }
+    };
+
     const inputChangeHandler = useCallback(
         (inputId, inputValue, inputValidity) => {
             dispatchFormState({
@@ -63,67 +101,64 @@ const AuthScreen = props => {
             });
         }, [dispatchFormState]);
 
+    return (
+        <KeyboardAvoidingView
+            style={styles.screen}
+            behavior='padding'
+            keyboardVerticalOffset={50}
+        >
+            <ImageBackground style={styles.background} source={require('../../assets/background.jpg')}>
 
-    const singupHandler = () => {
-        // dispatch(authActions.signup());
-        console.log("UserName: " + formState.inputValues.email)
-        console.log("Password: " + formState.inputValues.password)
-        props.navigation.navigate('Shop');
-};
-return (
-    <KeyboardAvoidingView
-        style={styles.screen}
-        behavior='padding'
-        keyboardVerticalOffset={50}
-    >
-        <ImageBackground style={styles.background} source={require('../../assets/background.jpg')}>
-
-            <Card style={styles.authContainer}>
-                <ScrollView>
-                    <Input
-                        id='email'
-                        label='E-Mail'
-                        keyboardType='email-address'
-                        required
-                        email
-                        autoCapitalize='none'
-                        errorText='Please enter a valid email address.'
-                        onInputChange={inputChangeHandler}
-                        initialValue=''
-                    />
-                    <Input
-                        id='password'
-                        label='Password'
-                        keyboardType='default'
-                        secureTextEntry
-                        required
-                        minLength={5}
-                        autoCapitalize='none'
-                        errorText='Please enter a valid password.'
-                        onInputChange={inputChangeHandler}
-                        initialValue=''
-                    />
-                    <View style={styles.buttonContainer}>
-
-                        <Button
-                            title="Login"
-                            color={Colors.login}
-                            onPress={singupHandler}
+                <Card style={styles.authContainer}>
+                    <ScrollView>
+                        <Input
+                            id='email'
+                            label='E-Mail'
+                            keyboardType='email-address'
+                            required
+                            email
+                            autoCapitalize='none'
+                            errorText='Please enter a valid email address.'
+                            onInputChange={inputChangeHandler}
+                            initialValue=''
                         />
-
-                    </View>
-                    <View style={styles.buttonContainer}>
-                        <Button
-                            title="Switch to Sign Up"
-                            color={Colors.signup}
-                            onPress={()=>{}}
+                        <Input
+                            id='password'
+                            label='Password'
+                            keyboardType='default'
+                            secureTextEntry
+                            required
+                            minLength={5}
+                            autoCapitalize='none'
+                            errorText='Please enter a valid password.'
+                            onInputChange={inputChangeHandler}
+                            initialValue=''
                         />
-                    </View>
-                </ScrollView>
-            </Card>
-        </ImageBackground>
-    </KeyboardAvoidingView >
-);
+                        <View style={styles.buttonContainer}>
+                            {isLoading ? (
+                                <ActivityIndicator size='small' color={Colors.primary} />
+                            ) : (
+                                    <Button
+                                        title={isSignup ? 'Sign Up' : 'Login'}
+                                        color={Colors.primary}
+                                        onPress={authHandler}
+                                    />
+                                )}
+                        </View>
+                        <View style={styles.buttonContainer}>
+                            <Button
+                                title={`Switch to ${isSignup ? 'Login' : 'Sign Up'}`}
+                                color={Colors.accent}
+                                onPress={() => {
+                                    setIsSignup(prevState => !prevState);
+                                }}
+                            />
+                        </View>
+                    </ScrollView>
+                </Card>
+            </ImageBackground>
+        </KeyboardAvoidingView>
+    );
 };
 
 AuthScreen.navigationOptions = {
